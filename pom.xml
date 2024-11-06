@@ -45,8 +45,8 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
+            <groupId>org.modelmapper.extensions</groupId>
+            <artifactId>modelmapper-spring</artifactId>
             <version>3.0.0</version>
         </dependency>
         <dependency>

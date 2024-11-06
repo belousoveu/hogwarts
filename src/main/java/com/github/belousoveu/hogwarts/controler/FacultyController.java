@@ -28,14 +28,14 @@ public class FacultyController {
 
 
     @GetMapping("/search")
-    public Faculty searchFacultyByName(@RequestParam String name) {
+    public Faculty searchFacultyByName(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
         return facultyService.getFaculty(name);
     }
 
-    @GetMapping("search")
-    public Collection<Faculty> searchFacultyByColor(@RequestParam String color) {
-        return facultyService.findFacultiesByColor(color);
-    }
+//    @GetMapping("search")
+//    public Collection<Faculty> searchFacultyByColor(@RequestParam String color) {
+//        return facultyService.findFacultiesByColor(color);
+//    }
 
     @PutMapping("/{id}")
     public Faculty updateFaculty(@PathVariable int id, @RequestBody String color) {

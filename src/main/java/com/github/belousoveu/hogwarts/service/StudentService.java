@@ -57,7 +57,7 @@ public class StudentService {
     }
 
     public Collection<Student> findStudentByFaculty(String faculty) {
-        return students.values().stream().filter(s -> s.getFaculty().getName().equals(faculty)).toList();
+        return students.values().stream().filter(s -> s.getFaculty().getTitle().equals(faculty)).toList();
     }
 
 }
