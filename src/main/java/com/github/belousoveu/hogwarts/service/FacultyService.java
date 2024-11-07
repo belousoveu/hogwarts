@@ -2,6 +2,7 @@ package com.github.belousoveu.hogwarts.service;
 
 import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
 import com.github.belousoveu.hogwarts.model.Faculty;
+import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -35,5 +36,13 @@ public class FacultyService {
     public Faculty updateFaculty(int id, String color) {
         Faculty.values()[id].setColor(color);
         return Faculty.values()[id];
+    }
+
+    public Collection<Faculty> findFaculty(@Nullable String name, @Nullable String color) {
+
+        return Arrays.stream(Faculty.values())
+                .filter(faculty -> (name == null || faculty.getTitle().equalsIgnoreCase(name)))
+                .filter(faculty -> (color == null || faculty.getColor().equalsIgnoreCase(color)))
+                .toList();
     }
 }
