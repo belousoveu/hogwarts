@@ -5,10 +5,10 @@ import lombok.Setter;
 
 @Getter
 public enum Faculty {
-    GRYFFINDOR ("Гриффиндор"),
-    HUFFLEPUFF ("Пуффендуй"),
-    RAVENCLAW ("Когтевран"),
-    SLYTHERIN ("Слизерин");
+    GRYFFINDOR("Гриффиндор"),
+    HUFFLEPUFF("Пуффендуй"),
+    RAVENCLAW("Когтевран"),
+    SLYTHERIN("Слизерин");
 
     Faculty(String title) {
         this.title = title;

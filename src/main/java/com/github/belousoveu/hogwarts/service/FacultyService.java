@@ -37,15 +37,15 @@ public class FacultyService {
         if (id < 1 || id > Faculty.values().length) {
             throw new FacultyNotFoundException(id);
         }
-        Faculty.values()[id-1].setColor(color);
-        return Faculty.values()[id-1];
+        Faculty.values()[id - 1].setColor(color);
+        return Faculty.values()[id - 1];
     }
 
     public Collection<Faculty> findFaculty(@Nullable String name, @Nullable String color) {
 
         return Arrays.stream(Faculty.values())
                 .filter(faculty -> (name == null || faculty.getTitle().equalsIgnoreCase(name)))
-                .filter(faculty -> (color == null || (faculty.getColor()!=null && faculty.getColor().equalsIgnoreCase(color))))
+                .filter(faculty -> (color == null || (faculty.getColor() != null && faculty.getColor().equalsIgnoreCase(color))))
                 .toList();
     }
 }
