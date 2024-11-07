@@ -28,14 +28,10 @@ public class StudentController {
     }
 
     @GetMapping("/filter")
-    public Collection<Student> findStudentsByAge(@RequestParam(required = false) int age, @RequestParam(required = false) String faculty) {
+    public Collection<Student> findStudentsByAge(@RequestParam(required = false) int age) {
         return studentService.findStudentByAge(age);
     }
 
-//    @GetMapping("/filter")
-//    public Collection<Student> findStudentsByFaculty(@RequestParam String faculty) {
-//        return studentService.findStudentByFaculty(faculty);
-//    }
 
     @PostMapping("/add")
     public Student addStudent(@RequestBody StudentDto dto) {
