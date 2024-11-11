@@ -1,22 +1,32 @@
 package com.github.belousoveu.hogwarts.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
-@Getter
-public enum Faculty {
-    GRYFFINDOR("Гриффиндор"),
-    HUFFLEPUFF("Пуффендуй"),
-    RAVENCLAW("Когтевран"),
-    SLYTHERIN("Слизерин");
+@Data
+@NoArgsConstructor
+@Entity(name = "faculties")
+public class Faculty {
+//    GRYFFINDOR("Гриффиндор"),
+//    HUFFLEPUFF("Пуффендуй"),
+//    RAVENCLAW("Когтевран"),
+//    SLYTHERIN("Слизерин");
 
-    Faculty(String title) {
-        this.title = title;
+    @Id
+    @GeneratedValue
+    private int id;
+    @UniqueElements(message = "Faculty name must be unique")
+    private String name;
+    private String color;
+
+
+    public Faculty(String name) {
+        this.name = name;
     }
 
-    private final String title;
-
-    @Setter
-    private String color;
 
 }
