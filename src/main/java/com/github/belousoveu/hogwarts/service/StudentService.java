@@ -2,9 +2,10 @@ package com.github.belousoveu.hogwarts.service;
 
 import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
 import com.github.belousoveu.hogwarts.mapper.StudentMapper;
-import com.github.belousoveu.hogwarts.model.Student;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -23,13 +24,19 @@ public class StudentService {
         this.facultyService = facultyService;
     }
 
+    @Transactional
     public Student addStudent(StudentDto studentDto) {
         return studentRepository.save(studentMapper.toEntity(studentDto));
     }
 
+    @Transactional
     public Student updateStudent(long id, StudentDto studentDto) {
-        studentDto.setId(id);
-        return studentRepository.save(studentMapper.toEntity(studentDto));
+        if (studentRepository.existsById(id)) {
+            studentDto.setId(id);
+            Student student = studentMapper.toEntity(studentDto);
+            return studentRepository.save(student);
+        }
+        throw new StudentNotFoundException(id);
     }
 
     public void deleteStudent(long id) {

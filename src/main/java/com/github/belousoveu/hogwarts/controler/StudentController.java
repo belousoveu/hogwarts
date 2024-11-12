@@ -1,8 +1,10 @@
 package com.github.belousoveu.hogwarts.controler;
 
-import com.github.belousoveu.hogwarts.model.Student;
+import com.github.belousoveu.hogwarts.mapper.StudentMapper;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,11 @@ import java.util.Collection;
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentMapper studentMapper;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, StudentMapper studentMapper) {
         this.studentService = studentService;
+        this.studentMapper = studentMapper;
     }
 
     @GetMapping("/all")
@@ -24,8 +28,8 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable long id) {
-        return studentService.getStudent(id);
+    public StudentDto getStudentById(@PathVariable long id) {
+        return studentMapper.toDto(studentService.getStudent(id));
     }
 
     @GetMapping("/filter")
@@ -35,12 +39,12 @@ public class StudentController {
 
 
     @PostMapping("/add")
-    public Student addStudent(@RequestBody StudentDto dto) {
+    public Student addStudent(@Valid @RequestBody StudentDto dto) {
         return studentService.addStudent(dto);
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable long id, @RequestBody StudentDto dto) {
+    public Student updateStudent(@PathVariable long id, @Valid @RequestBody StudentDto dto) {
         return studentService.updateStudent(id, dto);
     }
 

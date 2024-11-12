@@ -1,6 +1,6 @@
 package com.github.belousoveu.hogwarts.repository;
 
-import com.github.belousoveu.hogwarts.model.Student;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
