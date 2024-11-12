@@ -1,6 +1,7 @@
 package com.github.belousoveu.hogwarts.controler;
 
 import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
+import com.github.belousoveu.hogwarts.exception.NotUniqueFacultyNameException;
 import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
 import com.github.belousoveu.hogwarts.exception.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,11 @@ public class GlobalControllerAdvice {
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(new ValidationErrorResponse(violations), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotUniqueFacultyNameException.class)
+    public ResponseEntity<String> handleNotUniqueFacultyNameException(NotUniqueFacultyNameException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
 }

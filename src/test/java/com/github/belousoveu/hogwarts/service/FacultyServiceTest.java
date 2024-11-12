@@ -131,7 +131,7 @@ class FacultyServiceTest {
 
 
     @Test
-    @Disabled("not correct test")
+//    @Disabled("not correct test")
     @Transactional
     void test_updateFaculty_whenIncorrectData() {
         FacultyDto expectedDto = TestData.getMockFacultyDto("test2", "blue");
