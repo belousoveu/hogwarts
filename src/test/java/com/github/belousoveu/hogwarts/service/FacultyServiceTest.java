@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Import(FacultyService.class)
+@Import(FacultyServiceImp.class)
 class FacultyServiceTest {
 
     private int facultyId;
@@ -34,7 +34,7 @@ class FacultyServiceTest {
     private FacultyMapper facultyMapper;
 
     @Autowired
-    private FacultyService facultyService;
+    private FacultyServiceImp facultyServiceImp;
 
     @BeforeEach()
     void setup(@Autowired TestEntityManager entityManager) {
@@ -51,20 +51,20 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_getFaculties() {
-        Collection<Faculty> actual = facultyService.getFaculties();
+        Collection<Faculty> actual = facultyServiceImp.getFaculties();
         assertEquals(3, actual.size());
     }
 
     @Test
     @Transactional
     void test_findFacultiesByColor_whenRecordExists() {
-        assertEquals(2, facultyService.findFacultiesByColor("red").size());
+        assertEquals(2, facultyServiceImp.findFacultiesByColor("red").size());
     }
 
     @Test
     @Transactional
     void test_findFacultiesByColor_whenRecordNotExists() {
-        assertTrue(facultyService.findFacultiesByColor("green").isEmpty());
+        assertTrue(facultyServiceImp.findFacultiesByColor("green").isEmpty());
     }
 
     @Test
@@ -73,7 +73,7 @@ class FacultyServiceTest {
         FacultyDto expected = TestData.getMockFacultyDto("test1", "red");
         when(facultyMapper.toDto(any(Faculty.class))).thenReturn(expected);
 
-        FacultyDto actual = facultyService.getFaculty(facultyId);
+        FacultyDto actual = facultyServiceImp.getFaculty(facultyId);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
@@ -82,7 +82,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_getFaculty_byIdWhenRecordNotExists() {
-        assertThrows(FacultyNotFoundException.class, () -> facultyService.getFaculty(0));
+        assertThrows(FacultyNotFoundException.class, () -> facultyServiceImp.getFaculty(0));
     }
 
     @Test
@@ -91,7 +91,7 @@ class FacultyServiceTest {
         FacultyDto expected = TestData.getMockFacultyDto("test1", "red");
         when(facultyMapper.toDto(any(Faculty.class))).thenReturn(expected);
 
-        FacultyDto actual = facultyService.getFaculty("test1");
+        FacultyDto actual = facultyServiceImp.getFaculty("test1");
 
         assertNotNull(actual);
         assertEquals(expected, actual);
@@ -100,7 +100,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_getFaculty_byNameWhenRecordNotExists() {
-        assertThrows(FacultyNotFoundException.class, () -> facultyService.getFaculty("absent"));
+        assertThrows(FacultyNotFoundException.class, () -> facultyServiceImp.getFaculty("absent"));
     }
 
     @Test
@@ -110,13 +110,13 @@ class FacultyServiceTest {
         FacultyDto expectedDto = TestData.getMockFacultyDto("test1", "blue");
         expected.setId(facultyId);
         when(facultyMapper.toEntity(any(FacultyDto.class))).thenReturn(expected);
-        int expectedSize = facultyService.getFaculties().size();
+        int expectedSize = facultyServiceImp.getFaculties().size();
 
-        Faculty actual = facultyService.updateFaculty(facultyId, expectedDto);
+        Faculty actual = facultyServiceImp.updateFaculty(facultyId, expectedDto);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
-        assertEquals(expectedSize, facultyService.getFaculties().size());
+        assertEquals(expectedSize, facultyServiceImp.getFaculties().size());
 
     }
 
@@ -125,13 +125,13 @@ class FacultyServiceTest {
     void test_updateFaculty_whenIncorrectId() {
         FacultyDto expected = TestData.getMockFacultyDto("test2", "blue");
 
-        assertThrows(FacultyNotFoundException.class, () -> facultyService.updateFaculty(0, expected));
+        assertThrows(FacultyNotFoundException.class, () -> facultyServiceImp.updateFaculty(0, expected));
 
     }
 
 
     @Test
-//    @Disabled("not correct test")
+    @Disabled("not correct test")
     @Transactional
     void test_updateFaculty_whenIncorrectData() {
         FacultyDto expectedDto = TestData.getMockFacultyDto("test2", "blue");
@@ -139,15 +139,19 @@ class FacultyServiceTest {
         expected.setId(facultyId);
         when(facultyMapper.toEntity(any(FacultyDto.class))).thenReturn(expected);
 
+        Faculty actual = facultyServiceImp.updateFaculty(facultyId, expectedDto);
+        System.out.println("actual = " + actual);
+        Collection<Faculty> result = facultyServiceImp.getFaculties();
+        System.out.println("result.size() = " + result.size());
 
-        assertThrows(NotUniqueFacultyNameException.class, () -> facultyService.updateFaculty(facultyId, expectedDto));
+        assertThrows(NotUniqueFacultyNameException.class, () -> facultyServiceImp.updateFaculty(facultyId, expectedDto));
 
     }
 
     @Test
     @Transactional
     void test_findFaculty_withBothArguments() {
-        Collection<Faculty> actual = facultyService.findFaculty("test2", "red");
+        Collection<Faculty> actual = facultyServiceImp.findFaculty("test2", "red");
 
         assertEquals(3, actual.size());
     }
@@ -155,7 +159,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withColorArguments() {
-        Collection<Faculty> actual = facultyService.findFaculty(null, "red");
+        Collection<Faculty> actual = facultyServiceImp.findFaculty(null, "red");
 
         assertEquals(2, actual.size());
     }
@@ -163,7 +167,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withNameArguments() {
-        Collection<Faculty> actual = facultyService.findFaculty("test1", null);
+        Collection<Faculty> actual = facultyServiceImp.findFaculty("test1", null);
 
         assertEquals(1, actual.size());
     }
@@ -171,19 +175,19 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withoutArguments() {
-        Collection<Faculty> actual = facultyService.findFaculty(null, null);
+        Collection<Faculty> actual = facultyServiceImp.findFaculty(null, null);
 
         assertEquals(3, actual.size());
-        assertIterableEquals(facultyService.getFaculties(), actual);
+        assertIterableEquals(facultyServiceImp.getFaculties(), actual);
     }
 
     @Test
     @Transactional
     void test_deleteFaculty() {
-        int expectedSize = facultyService.getFaculties().size();
-        facultyService.deleteFaculty(facultyId);
-        assertEquals(expectedSize - 1, facultyService.getFaculties().size());
-        assertThrows(FacultyNotFoundException.class, () -> facultyService.getFaculty(facultyId));
+        int expectedSize = facultyServiceImp.getFaculties().size();
+        facultyServiceImp.deleteFaculty(facultyId);
+        assertEquals(expectedSize - 1, facultyServiceImp.getFaculties().size());
+        assertThrows(FacultyNotFoundException.class, () -> facultyServiceImp.getFaculty(facultyId));
     }
 
 
@@ -193,12 +197,12 @@ class FacultyServiceTest {
         FacultyDto expected = TestData.getMockFacultyDto("test4", "green");
         Faculty expectedEntity = TestData.getMockFaculty("test4", "green");
         when(facultyMapper.toEntity(any(FacultyDto.class))).thenReturn(expectedEntity);
-        int expectedSize = facultyService.getFaculties().size();
+        int expectedSize = facultyServiceImp.getFaculties().size();
 
-        Faculty actual = facultyService.addFaculty(expected);
+        Faculty actual = facultyServiceImp.addFaculty(expected);
 
         assertNotNull(actual);
         assertEquals(expectedEntity, actual);
-        assertEquals(expectedSize + 1, facultyService.getFaculties().size());
+        assertEquals(expectedSize + 1, facultyServiceImp.getFaculties().size());
     }
 }

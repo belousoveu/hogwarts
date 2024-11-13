@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Import(StudentService.class)
+@Import(StudentServiceImp.class)
 class StudentServiceTest {
 
     private int facultyId;
@@ -36,10 +36,10 @@ class StudentServiceTest {
     private StudentMapper studentMapper;
 
     @MockBean
-    private FacultyService facultyService;
+    private FacultyServiceImp facultyServiceImp;
 
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImp studentServiceImp;
 
     @BeforeEach
     void setUp(@Autowired TestEntityManager entityManager) {
@@ -67,13 +67,13 @@ class StudentServiceTest {
     @Transactional
     void test_addStudent() {
         StudentDto studentDto = StudentDto.builder().name("name5").surname("surname5").age(11).build();
-        int expectedSize = studentService.getAllStudents().size();
+        int expectedSize = studentServiceImp.getAllStudents().size();
 
-        Student actualStudent = studentService.addStudent(studentDto);
+        Student actualStudent = studentServiceImp.addStudent(studentDto);
 
         assertNotNull(actualStudent);
-        assertEquals(expectedSize + 1, studentService.getAllStudents().size());
-        assertTrue(studentService.getAllStudents().contains(actualStudent));
+        assertEquals(expectedSize + 1, studentServiceImp.getAllStudents().size());
+        assertTrue(studentServiceImp.getAllStudents().contains(actualStudent));
 
     }
 
@@ -81,13 +81,13 @@ class StudentServiceTest {
 //    @Transactional
     void test_updateStudent_whenCorrectId() {
         StudentDto studentDto = StudentDto.builder().name("name5").surname("surname5").age(11).build();
-        int expectedSize = studentService.getAllStudents().size();
+        int expectedSize = studentServiceImp.getAllStudents().size();
 
-        Student actualStudent = studentService.updateStudent(studentId, studentDto);
+        Student actualStudent = studentServiceImp.updateStudent(studentId, studentDto);
 
         assertNotNull(actualStudent);
-        assertEquals(expectedSize, studentService.getAllStudents().size());
-        assertTrue(studentService.getAllStudents().contains(actualStudent));
+        assertEquals(expectedSize, studentServiceImp.getAllStudents().size());
+        assertTrue(studentServiceImp.getAllStudents().contains(actualStudent));
 
     }
 
@@ -96,26 +96,26 @@ class StudentServiceTest {
     void test_updateStudent_whenIncorrectId() {
         StudentDto studentDto = StudentDto.builder().name("name5").surname("surname5").age(11).build();
 
-        assertThrows(StudentNotFoundException.class, () -> studentService.updateStudent(0, studentDto));
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImp.updateStudent(0, studentDto));
 
     }
 
     @Test
     @Transactional
     void test_deleteStudent() {
-        int expectedSize = studentService.getAllStudents().size();
+        int expectedSize = studentServiceImp.getAllStudents().size();
 
-        studentService.deleteStudent(studentId);
+        studentServiceImp.deleteStudent(studentId);
 
-        assertEquals(expectedSize - 1, studentService.getAllStudents().size());
-        assertThrows(StudentNotFoundException.class, () -> studentService.getStudent(studentId));
+        assertEquals(expectedSize - 1, studentServiceImp.getAllStudents().size());
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImp.getStudent(studentId));
     }
 
     @Test
     @Transactional
     void test_getStudent_whenCorrectId() {
 
-        Student actualStudent = studentService.getStudent(studentId);
+        Student actualStudent = studentServiceImp.getStudent(studentId);
 
         assertNotNull(actualStudent);
         assertEquals(studentId, actualStudent.getId());
@@ -125,26 +125,26 @@ class StudentServiceTest {
     @Transactional
     void test_getStudent_whenIncorrectId() {
 
-        assertThrows(StudentNotFoundException.class, () -> studentService.getStudent(0L));
+        assertThrows(StudentNotFoundException.class, () -> studentServiceImp.getStudent(0L));
     }
 
     @Test
     @Transactional
     void test_getAllStudents() {
 
-        assertEquals(4, studentService.getAllStudents().size());
+        assertEquals(4, studentServiceImp.getAllStudents().size());
     }
 
     @Test
     @Transactional
     void test_findStudentByAge_whenRecordsExist() {
-        assertEquals(2, studentService.findStudentByAge(11).size());
+        assertEquals(2, studentServiceImp.findStudentByAge(11).size());
     }
 
     @Test
     @Transactional
     void test_findStudentByAge_whenRecordsNotExist() {
-        assertTrue(studentService.findStudentByAge(100).isEmpty());
+        assertTrue(studentServiceImp.findStudentByAge(100).isEmpty());
     }
 
     @Test
@@ -152,10 +152,10 @@ class StudentServiceTest {
     void test_findStudentByFaculty_whenRecordsNotExist() {
 
         FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyService.getFaculty(anyString())).thenReturn(facultyDto);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
         facultyDto.setId(0);
 
-        assertTrue(studentService.findStudentByFaculty("test3").isEmpty());
+        assertTrue(studentServiceImp.findStudentByFaculty("test3").isEmpty());
 //        assertThrows(FacultyNotFoundException.class,() -> studentService.findStudentByFaculty("test3"));
     }
 
@@ -164,10 +164,10 @@ class StudentServiceTest {
     void test_findStudentByFaculty_whenRecordsExist() {
 
         FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyService.getFaculty(anyString())).thenReturn(facultyDto);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
         facultyDto.setId(facultyId);
 
-        Collection<Student> actual = studentService.findStudentByFaculty("test1");
+        Collection<Student> actual = studentServiceImp.findStudentByFaculty("test1");
         assertEquals(2, actual.size());
         assertEquals("test1", actual.iterator().next().getFaculty().getName());
     }

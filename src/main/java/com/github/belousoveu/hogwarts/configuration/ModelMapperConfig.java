@@ -11,9 +11,6 @@ public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
-        // Настройка, если необходимо
-//        Provider<?> springProvider = SpringIntegration.fromSpring(beanFactory);
-//        modelMapper.getConfiguration().setProvider(springProvider);
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
