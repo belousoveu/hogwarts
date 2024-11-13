@@ -77,7 +77,7 @@ public class FacultyServiceImp implements FacultyService {
 
     private Faculty save(Faculty faculty)  {
         try {
-            return facultyRepository.save(faculty);
+            return facultyRepository.saveAndFlush(faculty);
 
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {

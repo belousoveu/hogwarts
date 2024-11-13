@@ -131,18 +131,12 @@ class FacultyServiceTest {
 
 
     @Test
-    @Disabled("not correct test")
     @Transactional
     void test_updateFaculty_whenIncorrectData() {
         FacultyDto expectedDto = TestData.getMockFacultyDto("test2", "blue");
         Faculty expected = TestData.getMockFaculty("test2", "blue");
         expected.setId(facultyId);
         when(facultyMapper.toEntity(any(FacultyDto.class))).thenReturn(expected);
-
-        Faculty actual = facultyServiceImp.updateFaculty(facultyId, expectedDto);
-        System.out.println("actual = " + actual);
-        Collection<Faculty> result = facultyServiceImp.getFaculties();
-        System.out.println("result.size() = " + result.size());
 
         assertThrows(NotUniqueFacultyNameException.class, () -> facultyServiceImp.updateFaculty(facultyId, expectedDto));
 
@@ -204,5 +198,17 @@ class FacultyServiceTest {
         assertNotNull(actual);
         assertEquals(expectedEntity, actual);
         assertEquals(expectedSize + 1, facultyServiceImp.getFaculties().size());
+    }
+
+    @Test
+    @Transactional
+    void test_addFaculty_whenIncorrectData() {
+        FacultyDto expectedDto = TestData.getMockFacultyDto("test1", "green");
+
+        Faculty expected = TestData.getMockFaculty("test1", "green");
+        when(facultyMapper.toEntity(any(FacultyDto.class))).thenReturn(expected);
+
+        assertThrows(NotUniqueFacultyNameException.class, () -> facultyServiceImp.updateFaculty(facultyId, expectedDto));
+
     }
 }
