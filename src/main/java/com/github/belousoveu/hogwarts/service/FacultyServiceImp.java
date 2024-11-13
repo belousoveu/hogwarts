@@ -5,6 +5,7 @@ import com.github.belousoveu.hogwarts.exception.NotUniqueFacultyNameException;
 import com.github.belousoveu.hogwarts.mapper.FacultyMapper;
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.FacultyRepository;
 import jakarta.transaction.Transactional;
 import org.hibernate.exception.ConstraintViolationException;
@@ -12,6 +13,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class FacultyServiceImp implements FacultyService {
@@ -74,6 +77,13 @@ public class FacultyServiceImp implements FacultyService {
     public Faculty addFaculty(FacultyDto dto) {
         return save(facultyMapper.toEntity(dto));
     }
+
+//    @Override
+//    @Transactional
+//    public Collection<Student> getFacultyStudents(int id) {
+//       Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
+//       return Collections.unmodifiableCollection(faculty.getStudents());
+//    } // TODO выяснить в чем подвох и почему так не работает
 
     private Faculty save(Faculty faculty)  {
         try {

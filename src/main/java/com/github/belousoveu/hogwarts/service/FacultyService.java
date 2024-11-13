@@ -2,6 +2,7 @@ package com.github.belousoveu.hogwarts.service;
 
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import jakarta.transaction.Transactional;
 
 import java.util.Collection;
@@ -24,4 +25,6 @@ public interface FacultyService {
 
     @Transactional
     Faculty addFaculty(FacultyDto dto);
+
+//    Collection<Student> getFacultyStudents(int id);
 }

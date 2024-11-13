@@ -1,7 +1,6 @@
 package com.github.belousoveu.hogwarts.controler;
 
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
-import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
 import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.service.FacultyService;
@@ -41,6 +40,7 @@ public class FacultyController {
 
     @GetMapping("/{id}/students")
     public Collection<Student> getFacultyStudents(@PathVariable int id) {
+//        return facultyService.getFacultyStudents(id);
         return studentService.findStudentByFaculty(id);
     }
 

@@ -58,13 +58,14 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public Collection<Student> findStudentByAge(List<Integer> age) { //TODO переделать тестовый метод
+    public Collection<Student> findStudentByAge(List<Integer> age) {
         if (age == null || age.isEmpty()) {
             return studentRepository.findAll();
         } else if (age.size() == 1) {
             return studentRepository.findAllByAge(age.get(0));
         } else if (age.size() == 2) {
-            return studentRepository.findAllByAgeBetween(age.get(0), age.get(1));
+            return studentRepository
+                    .findAllByAgeBetween(Math.min(age.get(0), age.get(1)), Math.max(age.get(0), age.get(1)));
         } else {
             return studentRepository.findAllByAgeIn(age);
         }
@@ -76,7 +77,7 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public Collection<Student> findStudentByFaculty(int facultyId) { //TODO добавить тестовый
+    public Collection<Student> findStudentByFaculty(int facultyId) {
         return studentRepository.findAllByFacultyId(facultyId);
     }
 }
