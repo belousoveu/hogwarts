@@ -1,51 +1,27 @@
 package com.github.belousoveu.hogwarts.service;
 
-import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
-import com.github.belousoveu.hogwarts.model.Faculty;
-import jakarta.annotation.Nullable;
-import org.springframework.stereotype.Service;
+import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
+import com.github.belousoveu.hogwarts.model.entity.Faculty;
+import jakarta.transaction.Transactional;
 
-import java.util.Arrays;
 import java.util.Collection;
 
-@Service
-public class FacultyService {
+public interface FacultyService {
+    Collection<Faculty> getFaculties();
 
-    public Collection<Faculty> getFaculties() {
-        return Arrays.stream(Faculty.values()).toList();
-    }
+    Collection<Faculty> findFacultiesByColor(String color);
 
-    public Collection<Faculty> findFacultiesByColor(String color) {
-        return Arrays.stream(Faculty.values()).filter(faculty -> faculty.getColor().equals(color)).toList();
-    }
+    FacultyDto getFaculty(int id);
 
-    public Faculty getFaculty(int id) {
-        if (id < 1 || id > Faculty.values().length) {
-            throw new FacultyNotFoundException(id);
-        }
-        return Faculty.values()[id - 1];
-    }
+    FacultyDto getFaculty(String name);
 
-    public Faculty getFaculty(String name) {
-        return Arrays.stream(Faculty.values())
-                .filter(faculty -> faculty.getTitle().equals(name))
-                .findFirst()
-                .orElseThrow(() -> new FacultyNotFoundException(name));
-    }
+    @Transactional
+    Faculty updateFaculty(int id, FacultyDto dto);
 
-    public Faculty updateFaculty(int id, String color) {
-        if (id < 1 || id > Faculty.values().length) {
-            throw new FacultyNotFoundException(id);
-        }
-        Faculty.values()[id-1].setColor(color);
-        return Faculty.values()[id-1];
-    }
+    Collection<Faculty> findFaculty(String name, String color);
 
-    public Collection<Faculty> findFaculty(@Nullable String name, @Nullable String color) {
+    void deleteFaculty(int id);
 
-        return Arrays.stream(Faculty.values())
-                .filter(faculty -> (name == null || faculty.getTitle().equalsIgnoreCase(name)))
-                .filter(faculty -> (color == null || (faculty.getColor()!=null && faculty.getColor().equalsIgnoreCase(color))))
-                .toList();
-    }
+    @Transactional
+    Faculty addFaculty(FacultyDto dto);
 }

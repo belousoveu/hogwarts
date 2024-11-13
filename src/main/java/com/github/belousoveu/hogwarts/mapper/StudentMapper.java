@@ -1,7 +1,7 @@
 package com.github.belousoveu.hogwarts.mapper;
 
-import com.github.belousoveu.hogwarts.model.Student;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
