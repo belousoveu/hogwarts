@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/student")
@@ -23,8 +24,12 @@ public class StudentController {
     }
 
     @GetMapping("/all")
-    public Collection<Student> getAllStudents() {
-        return studentService.getAllStudents();
+    public Collection<Student> getAllStudents(@RequestParam(name="faculty_id", required = false) Integer facultyId) {
+        if (facultyId == null) {
+            return studentService.getAllStudents();
+        } else {
+            return studentService.findStudentByFaculty(facultyId);
+        }
     }
 
     @GetMapping("/{id}")
@@ -33,7 +38,7 @@ public class StudentController {
     }
 
     @GetMapping("/filter")
-    public Collection<Student> findStudentsByAge(@RequestParam(required = false) int age) {
+    public Collection<Student> findStudentsByAge(@RequestParam(required = false) List<Integer> age) {
         return studentService.findStudentByAge(age);
     }
 

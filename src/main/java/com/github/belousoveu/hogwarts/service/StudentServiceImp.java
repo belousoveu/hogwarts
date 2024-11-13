@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudentServiceImp implements StudentService {
@@ -57,13 +58,25 @@ public class StudentServiceImp implements StudentService {
     }
 
     @Override
-    public Collection<Student> findStudentByAge(int age) {
-        return studentRepository.findAllByAge(age);
+    public Collection<Student> findStudentByAge(List<Integer> age) { //TODO переделать тестовый метод
+        if (age == null || age.isEmpty()) {
+            return studentRepository.findAll();
+        } else if (age.size() == 1) {
+            return studentRepository.findAllByAge(age.get(0));
+        } else if (age.size() == 2) {
+            return studentRepository.findAllByAgeBetween(age.get(0), age.get(1));
+        } else {
+            return studentRepository.findAllByAgeIn(age);
+        }
     }
 
     @Override
     public Collection<Student> findStudentByFaculty(String faculty) {
-        return studentRepository.findAllByFaculty_Id(facultyService.getFaculty(faculty).getId());
+        return studentRepository.findAllByFacultyId(facultyService.getFaculty(faculty).getId());
     }
 
+    @Override
+    public Collection<Student> findStudentByFaculty(int facultyId) { //TODO добавить тестовый
+        return studentRepository.findAllByFacultyId(facultyId);
+    }
 }

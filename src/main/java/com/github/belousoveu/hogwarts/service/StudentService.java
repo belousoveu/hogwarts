@@ -5,6 +5,7 @@ import com.github.belousoveu.hogwarts.model.entity.Student;
 import jakarta.transaction.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface StudentService {
     @Transactional
@@ -19,7 +20,9 @@ public interface StudentService {
 
     Collection<Student> getAllStudents();
 
-    Collection<Student> findStudentByAge(int age);
+    Collection<Student> findStudentByAge(List<Integer> age);
 
     Collection<Student> findStudentByFaculty(String faculty);
+
+    Collection<Student> findStudentByFaculty(int facultyId);
 }

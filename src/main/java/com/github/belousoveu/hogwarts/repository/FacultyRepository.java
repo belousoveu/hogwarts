@@ -12,5 +12,5 @@ public interface FacultyRepository extends JpaRepository<Faculty, Integer> {
 
     Optional<Faculty> findByName(String name);
 
-    Collection<Faculty> findByNameOrColor(String name, String color);
+    Collection<Faculty> findAllByNameOrColor(String name, String color);
 }

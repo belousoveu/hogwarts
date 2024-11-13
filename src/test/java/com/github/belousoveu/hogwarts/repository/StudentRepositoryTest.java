@@ -62,7 +62,7 @@ class StudentRepositoryTest {
     @Transactional
     void test_findAllByFaculty_Id_whenRecordsExist() {
 
-        Collection<Student> students = studentRepository.findAllByFaculty_Id(facultyId);
+        Collection<Student> students = studentRepository.findAllByFacultyId(facultyId);
 
         assertEquals(2, students.size());
     }
@@ -71,7 +71,7 @@ class StudentRepositoryTest {
     @Transactional
     void test_findAllByFaculty_Id_whenRecordsNotExist() {
 
-        Collection<Student> students = studentRepository.findAllByFaculty_Id(5);
+        Collection<Student> students = studentRepository.findAllByFacultyId(5);
 
         assertTrue(students.isEmpty());
     }

@@ -73,7 +73,7 @@ class FacultyRepositoryTest {
     @Transactional
     void test_findByNameOrColor_withBothArguments() {
 
-        Collection<Faculty> actual = facultyRepository.findByNameOrColor("test2", "red");
+        Collection<Faculty> actual = facultyRepository.findAllByNameOrColor("test2", "red");
 
         assertEquals(3, actual.size());
     }
@@ -82,7 +82,7 @@ class FacultyRepositoryTest {
     @Transactional
     void test_findByNameOrColor_withColorArgument() {
 
-        Collection<Faculty> actual = facultyRepository.findByNameOrColor(null, "red");
+        Collection<Faculty> actual = facultyRepository.findAllByNameOrColor(null, "red");
 
         assertEquals(2, actual.size());
     }
@@ -91,7 +91,7 @@ class FacultyRepositoryTest {
     @Transactional
     void test_findByNameOrColor_withNameArgument() {
 
-        Collection<Faculty> actual = facultyRepository.findByNameOrColor("test1", null);
+        Collection<Faculty> actual = facultyRepository.findAllByNameOrColor("test1", null);
 
         assertEquals(1, actual.size());
     }
@@ -100,7 +100,7 @@ class FacultyRepositoryTest {
     @Transactional
     void test_findByNameOrColor_withoutArgument() {
 
-        Collection<Faculty> actual = facultyRepository.findByNameOrColor(null, null);
+        Collection<Faculty> actual = facultyRepository.findAllByNameOrColor(null, null);
 
         assertEquals(0, actual.size());
     }

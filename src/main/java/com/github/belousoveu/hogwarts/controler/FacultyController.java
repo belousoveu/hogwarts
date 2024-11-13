@@ -1,8 +1,11 @@
 package com.github.belousoveu.hogwarts.controler;
 
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
+import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.service.FacultyService;
+import com.github.belousoveu.hogwarts.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,11 @@ import java.util.Collection;
 public class FacultyController {
 
     private final FacultyService facultyService;
+    private final StudentService studentService;
 
-    public FacultyController(FacultyService facultyService) {
+    public FacultyController(FacultyService facultyService, StudentService studentService) {
         this.facultyService = facultyService;
+        this.studentService = studentService;
     }
 
     @GetMapping()
@@ -32,6 +37,11 @@ public class FacultyController {
     @GetMapping("/{id}")
     public FacultyDto getFacultyById(@PathVariable int id) {
         return facultyService.getFaculty(id);
+    }
+
+    @GetMapping("/{id}/students")
+    public Collection<Student> getFacultyStudents(@PathVariable int id) {
+        return studentService.findStudentByFaculty(id);
     }
 
     @PutMapping("/{id}")

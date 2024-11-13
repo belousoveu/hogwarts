@@ -61,7 +61,7 @@ public class FacultyServiceImp implements FacultyService {
         if (color == null && name == null) {
             return facultyRepository.findAll();
         }
-        return facultyRepository.findByNameOrColor(name, color);
+        return facultyRepository.findAllByNameOrColor(name, color);
     }
 
     @Override
