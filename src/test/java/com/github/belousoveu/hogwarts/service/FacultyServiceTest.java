@@ -4,11 +4,13 @@ import com.github.belousoveu.hogwarts.TestData;
 import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
 import com.github.belousoveu.hogwarts.exception.NotUniqueFacultyNameException;
 import com.github.belousoveu.hogwarts.mapper.FacultyMapper;
+import com.github.belousoveu.hogwarts.mapper.StudentMapper;
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
+import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
+import com.github.belousoveu.hogwarts.model.entity.Student;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,10 +31,13 @@ import static org.mockito.Mockito.when;
 @Import(FacultyServiceImp.class)
 class FacultyServiceTest {
 
-    private int facultyId;
+    private int facultyId, facultyId3;
 
     @MockBean
     private FacultyMapper facultyMapper;
+
+    @MockBean
+    private StudentMapper studentMapper;
 
     @Autowired
     private FacultyServiceImp facultyServiceImp;
@@ -44,7 +50,12 @@ class FacultyServiceTest {
         Faculty faculty2 = TestData.getMockFaculty("test2", "blue");
         entityManager.persist(faculty2);
         Faculty faculty3 = TestData.getMockFaculty("test3", "red");
+        Student student1 = Student.builder().id(1L).name("name1").surname("surname1").faculty(faculty3).build();
+        Student student2 = Student.builder().id(2L).name("name2").surname("surname2").faculty(faculty3).build();
+        faculty3.setStudents(List.of(student1,student2));
         entityManager.persist(faculty3);
+        facultyId3 = faculty3.getId();
+
         entityManager.flush();
     }
 
@@ -70,13 +81,11 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_getFaculty_byIdWhenRecordExists() {
-        FacultyDto expected = TestData.getMockFacultyDto("test1", "red");
-        when(facultyMapper.toDto(any(Faculty.class))).thenReturn(expected);
 
-        FacultyDto actual = facultyServiceImp.getFaculty(facultyId);
+        Faculty actual = facultyServiceImp.getFaculty(facultyId);
 
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals(facultyId, actual.getId());
     }
 
     @Test
@@ -88,13 +97,11 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_getFaculty_byNameWhenRecordExists() {
-        FacultyDto expected = TestData.getMockFacultyDto("test1", "red");
-        when(facultyMapper.toDto(any(Faculty.class))).thenReturn(expected);
 
-        FacultyDto actual = facultyServiceImp.getFaculty("test1");
+        Faculty actual = facultyServiceImp.getFaculty("test1");
 
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals("test1", actual.getName());
     }
 
     @Test
@@ -145,7 +152,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withBothArguments() {
-        Collection<Faculty> actual = facultyServiceImp.findFaculty("test2", "red");
+        Collection<Faculty> actual = facultyServiceImp.findFaculty("TEST2", "RED");
 
         assertEquals(3, actual.size());
     }
@@ -153,7 +160,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withColorArguments() {
-        Collection<Faculty> actual = facultyServiceImp.findFaculty(null, "red");
+        Collection<Faculty> actual = facultyServiceImp.findFaculty(null, "RED");
 
         assertEquals(2, actual.size());
     }
@@ -161,7 +168,7 @@ class FacultyServiceTest {
     @Test
     @Transactional
     void test_findFaculty_withNameArguments() {
-        Collection<Faculty> actual = facultyServiceImp.findFaculty("test1", null);
+        Collection<Faculty> actual = facultyServiceImp.findFaculty("TEST1", null);
 
         assertEquals(1, actual.size());
     }
@@ -210,5 +217,27 @@ class FacultyServiceTest {
 
         assertThrows(NotUniqueFacultyNameException.class, () -> facultyServiceImp.updateFaculty(facultyId, expectedDto));
 
+    }
+
+    @Test
+    @Transactional
+    void test_getFacultyStudents_whenCorrectId() {
+        Collection<StudentDto> actual = facultyServiceImp.getFacultyStudents(facultyId3);
+        assertEquals(2, actual.size());
+    }
+
+    @Test
+    @Transactional
+    void test_getFacultyStudents_whenIncorrectId() {
+
+        assertThrows(FacultyNotFoundException.class, () -> facultyServiceImp.getFacultyStudents(-1));
+    }
+
+    @Test
+    @Transactional
+    void test_getFacultyStudents_whenEmptyStudents() {
+
+        Collection<StudentDto> actual = facultyServiceImp.getFacultyStudents(facultyId);
+        assertTrue(actual.isEmpty());
     }
 }

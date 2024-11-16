@@ -3,9 +3,10 @@ package com.github.belousoveu.hogwarts.service;
 import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
 import com.github.belousoveu.hogwarts.exception.NotUniqueFacultyNameException;
 import com.github.belousoveu.hogwarts.mapper.FacultyMapper;
+import com.github.belousoveu.hogwarts.mapper.StudentMapper;
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
+import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
-import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.FacultyRepository;
 import jakarta.transaction.Transactional;
 import org.hibernate.exception.ConstraintViolationException;
@@ -13,17 +14,18 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class FacultyServiceImp implements FacultyService {
 
     private final FacultyMapper facultyMapper;
+    private final StudentMapper studentMapper;
     private final FacultyRepository facultyRepository;
 
-    public FacultyServiceImp(FacultyMapper facultyMapper, FacultyRepository facultyRepository) {
+    public FacultyServiceImp(FacultyMapper facultyMapper, StudentMapper studentMapper, FacultyRepository facultyRepository) {
         this.facultyMapper = facultyMapper;
+        this.studentMapper = studentMapper;
         this.facultyRepository = facultyRepository;
     }
 
@@ -38,15 +40,14 @@ public class FacultyServiceImp implements FacultyService {
     }
 
     @Override
-    public FacultyDto getFaculty(int id) {
-        Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
-        return facultyMapper.toDto(faculty);
+    public Faculty getFaculty(int id) {
+        return facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
+
     }
 
     @Override
-    public FacultyDto getFaculty(String name) {
-        Faculty faculty = facultyRepository.findByName(name).orElseThrow(() -> new FacultyNotFoundException(name));
-        return facultyMapper.toDto(faculty);
+    public Faculty getFaculty(String name) {
+        return facultyRepository.findByName(name).orElseThrow(() -> new FacultyNotFoundException(name));
     }
 
     @Transactional
@@ -78,14 +79,17 @@ public class FacultyServiceImp implements FacultyService {
         return save(facultyMapper.toEntity(dto));
     }
 
-//    @Override
-//    @Transactional
-//    public Collection<Student> getFacultyStudents(int id) {
-//       Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
-//       return Collections.unmodifiableCollection(faculty.getStudents());
-//    } // TODO выяснить в чем подвох и почему так не работает
+    @Override
+    @Transactional
+    public Collection<StudentDto> getFacultyStudents(int id) {
+        Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
+        if (faculty.getStudents() == null) {
+            return List.of();
+        }
+        return faculty.getStudents().stream().map(studentMapper::toDto).toList();
+    }
 
-    private Faculty save(Faculty faculty)  {
+    private Faculty save(Faculty faculty) {
         try {
             return facultyRepository.saveAndFlush(faculty);
 

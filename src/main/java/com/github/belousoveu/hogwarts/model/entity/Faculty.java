@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.Collection;
 
 @Data
 @NoArgsConstructor
@@ -17,8 +17,8 @@ public class Faculty {
     @Column(unique = true, nullable = false)
     private String name;
     private String color;
-    @OneToMany(mappedBy = "faculty", fetch = FetchType.EAGER)
-    private Set<Student> students;
+    @OneToMany(mappedBy = "faculty")
+    private Collection<Student> students;
 
 
 }

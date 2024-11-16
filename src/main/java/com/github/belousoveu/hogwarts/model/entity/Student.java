@@ -24,4 +24,11 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
+
+    @Override
+    public String toString() {
+        return "Student [id=" + id + ", name=" + name + ", surname=" + surname +
+                ", age=" + age + ", faculty=" + (faculty != null ? faculty.getName() : "") +
+                "]";
+    }
 }

@@ -1,7 +1,5 @@
 package com.github.belousoveu.hogwarts.model.dto;
 
-import com.github.belousoveu.hogwarts.model.entity.Faculty;
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -23,6 +21,5 @@ public class StudentDto {
     @Min(value = 11, message = "Age must be at least 11")
     @Max(value = 18, message = "Age must be at most 18")
     private int age;
-    @Nullable
-    private Faculty faculty;
+    private int facultyId;
 }

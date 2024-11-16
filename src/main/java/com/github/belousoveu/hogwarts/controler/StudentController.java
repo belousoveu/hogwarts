@@ -2,7 +2,6 @@ package com.github.belousoveu.hogwarts.controler;
 
 import com.github.belousoveu.hogwarts.mapper.StudentMapper;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
-import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +23,11 @@ public class StudentController {
     }
 
     @GetMapping("/all")
-    public Collection<Student> getAllStudents(@RequestParam(name="faculty_id", required = false) Integer facultyId) {
+    public Collection<StudentDto> getAllStudents(@RequestParam(name = "faculty_id", required = false) Integer facultyId) {
         if (facultyId == null) {
-            return studentService.getAllStudents();
+            return studentService.getAllStudents().stream().map(studentMapper::toDto).toList();
         } else {
-            return studentService.findStudentByFaculty(facultyId);
+            return studentService.findStudentByFaculty(facultyId).stream().map(studentMapper::toDto).toList();
         }
     }
 
@@ -38,19 +37,19 @@ public class StudentController {
     }
 
     @GetMapping("/filter")
-    public Collection<Student> findStudentsByAge(@RequestParam(required = false) List<Integer> age) {
-        return studentService.findStudentByAge(age);
+    public Collection<StudentDto> findStudentsByAge(@RequestParam(required = false) List<Integer> age) {
+        return studentService.findStudentByAge(age).stream().map(studentMapper::toDto).toList();
     }
 
 
     @PostMapping("/add")
-    public Student addStudent(@Valid @RequestBody StudentDto dto) {
-        return studentService.addStudent(dto);
+    public StudentDto addStudent(@Valid @RequestBody StudentDto dto) {
+        return studentMapper.toDto(studentService.addStudent(dto));
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable long id, @Valid @RequestBody StudentDto dto) {
-        return studentService.updateStudent(id, dto);
+    public StudentDto updateStudent(@PathVariable long id, @Valid @RequestBody StudentDto dto) {
+        return studentMapper.toDto(studentService.updateStudent(id, dto));
     }
 
     @DeleteMapping("/{id}")

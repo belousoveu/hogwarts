@@ -3,7 +3,6 @@ package com.github.belousoveu.hogwarts.service;
 import com.github.belousoveu.hogwarts.TestData;
 import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
 import com.github.belousoveu.hogwarts.mapper.StudentMapper;
-import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
 import com.github.belousoveu.hogwarts.model.entity.Student;
@@ -112,6 +111,7 @@ class StudentServiceTest {
         assertThrows(StudentNotFoundException.class, () -> studentServiceImp.getStudent(studentId));
     }
 
+
     @Test
     @Transactional
     void test_getStudent_whenCorrectId() {
@@ -174,11 +174,27 @@ class StudentServiceTest {
 
     @Test
     @Transactional
+    void test_findStudentByAge_withNullArgument() {
+
+        assertEquals(4, studentServiceImp.findStudentByAge(null).size());
+
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByAge_withEmptyArgumentList() {
+
+        assertEquals(4, studentServiceImp.findStudentByAge(List.of()).size());
+
+    }
+
+    @Test
+    @Transactional
     void test_findStudentByFacultyByName_whenRecordsNotExist() {
 
-        FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
-        facultyDto.setId(0);
+        Faculty faculty = TestData.getMockFaculty("test1", "color1");
+        faculty.setId(0);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(faculty);
 
         assertTrue(studentServiceImp.findStudentByFaculty("test3").isEmpty());
     }
@@ -187,9 +203,9 @@ class StudentServiceTest {
     @Transactional
     void test_findStudentByFacultyByName_whenRecordsExist() {
 
-        FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
-        facultyDto.setId(facultyId);
+        Faculty faculty = TestData.getMockFaculty("test1", "color1");
+        faculty.setId(facultyId);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(faculty);
 
         Collection<Student> actual = studentServiceImp.findStudentByFaculty("test1");
         assertEquals(2, actual.size());
