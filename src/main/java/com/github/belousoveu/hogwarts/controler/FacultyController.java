@@ -1,11 +1,9 @@
 package com.github.belousoveu.hogwarts.controler;
 
+import com.github.belousoveu.hogwarts.mapper.FacultyMapper;
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
-import com.github.belousoveu.hogwarts.model.entity.Faculty;
-import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.service.FacultyService;
-import com.github.belousoveu.hogwarts.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,36 +15,36 @@ import java.util.Collection;
 public class FacultyController {
 
     private final FacultyService facultyService;
-    private final StudentService studentService;
+    private final FacultyMapper facultyMapper;
 
-    public FacultyController(FacultyService facultyService, StudentService studentService) {
+    public FacultyController(FacultyService facultyService, FacultyMapper facultyMapper) {
         this.facultyService = facultyService;
-        this.studentService = studentService;
+        this.facultyMapper = facultyMapper;
     }
 
     @GetMapping()
-    public Collection<Faculty> getFacultyList() {
-        return facultyService.getFaculties();
+    public Collection<FacultyDto> getFacultyList() {
+        return facultyService.getFaculties().stream().map(facultyMapper::toDto).toList();
     }
 
     @PostMapping("/add")
-    public Faculty addFaculty(@Valid @RequestBody FacultyDto dto) {
-        return facultyService.addFaculty(dto);
+    public FacultyDto addFaculty(@Valid @RequestBody FacultyDto dto) {
+        return facultyMapper.toDto(facultyService.addFaculty(dto));
     }
 
     @GetMapping("/{id}")
     public FacultyDto getFacultyById(@PathVariable int id) {
-        return facultyService.getFaculty(id);
+        return facultyMapper.toDto(facultyService.getFaculty(id));
     }
 
     @GetMapping("/{id}/students")
-    public Collection<Student> getFacultyStudents(@PathVariable int id) {
-        return studentService.findStudentByFaculty(id);
+    public Collection<StudentDto> getFacultyStudents(@PathVariable int id) {
+        return facultyService.getFacultyStudents(id);
     }
 
     @PutMapping("/{id}")
-    public Faculty updateFaculty(@PathVariable int id, @Valid @RequestBody FacultyDto dto) {
-        return facultyService.updateFaculty(id, dto);
+    public FacultyDto updateFaculty(@PathVariable int id, @Valid @RequestBody FacultyDto dto) {
+        return facultyMapper.toDto(facultyService.updateFaculty(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -57,8 +55,8 @@ public class FacultyController {
 
 
     @GetMapping("/search")
-    public Collection<Faculty> getFilteredFaculty(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
-        return facultyService.findFaculty(name, color);
+    public Collection<FacultyDto> getFilteredFaculty(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
+        return facultyService.findFaculty(name, color).stream().map(facultyMapper::toDto).toList();
     }
 
 

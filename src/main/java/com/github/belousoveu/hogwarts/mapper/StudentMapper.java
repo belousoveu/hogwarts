@@ -1,6 +1,7 @@
 package com.github.belousoveu.hogwarts.mapper;
 
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
+import com.github.belousoveu.hogwarts.model.entity.Faculty;
 import com.github.belousoveu.hogwarts.model.entity.Student;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,14 @@ public class StudentMapper {
     }
 
     public Student toEntity(StudentDto studentDto) {
-        return modelMapper.map(studentDto, Student.class);
+        Student student = modelMapper.map(studentDto, Student.class);
+        if (studentDto.getFacultyId() != 0) {
+            Faculty faculty = new Faculty();
+            faculty.setId(studentDto.getFacultyId());
+            student.setFaculty(faculty);
+        } else {
+            student.setFaculty(null);
+        }
+        return student;
     }
 }

@@ -3,7 +3,6 @@ package com.github.belousoveu.hogwarts.service;
 import com.github.belousoveu.hogwarts.TestData;
 import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
 import com.github.belousoveu.hogwarts.mapper.StudentMapper;
-import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
 import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
 import com.github.belousoveu.hogwarts.model.entity.Student;
@@ -18,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,6 +111,7 @@ class StudentServiceTest {
         assertThrows(StudentNotFoundException.class, () -> studentServiceImp.getStudent(studentId));
     }
 
+
     @Test
     @Transactional
     void test_getStudent_whenCorrectId() {
@@ -137,38 +138,95 @@ class StudentServiceTest {
 
     @Test
     @Transactional
-    void test_findStudentByAge_whenRecordsExist() {
-        assertEquals(2, studentServiceImp.findStudentByAge(11).size());
+    void test_findStudentByAge_withOneArgumentWhenRecordsExist() {
+        assertEquals(2, studentServiceImp.findStudentByAge(List.of(11)).size());
     }
 
     @Test
     @Transactional
-    void test_findStudentByAge_whenRecordsNotExist() {
-        assertTrue(studentServiceImp.findStudentByAge(100).isEmpty());
+    void test_findStudentByAge_withOneArgumentWhenRecordsNotExist() {
+        assertTrue(studentServiceImp.findStudentByAge(List.of(100)).isEmpty());
     }
 
     @Test
     @Transactional
-    void test_findStudentByFaculty_whenRecordsNotExist() {
+    void test_findStudentByAge_withTwoArgumentWhenRecordsExist() {
+        assertEquals(2, studentServiceImp.findStudentByAge(List.of(12, 14)).size());
+    }
 
-        FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
-        facultyDto.setId(0);
+    @Test
+    @Transactional
+    void test_findStudentByAge_withTwoArgumentWhenRecordsNotExist() {
+        assertTrue(studentServiceImp.findStudentByAge(List.of(50, 100)).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByAge_withManyArgumentWhenRecordsExist() {
+        assertEquals(3, studentServiceImp.findStudentByAge(List.of(10, 12, 11)).size());
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByAge_withManyArgumentWhenRecordsNotExist() {
+        assertTrue(studentServiceImp.findStudentByAge(List.of(50, 75, 100)).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByAge_withNullArgument() {
+
+        assertEquals(4, studentServiceImp.findStudentByAge(null).size());
+
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByAge_withEmptyArgumentList() {
+
+        assertEquals(4, studentServiceImp.findStudentByAge(List.of()).size());
+
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByFacultyByName_whenRecordsNotExist() {
+
+        Faculty faculty = TestData.getMockFaculty("test1", "color1");
+        faculty.setId(0);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(faculty);
 
         assertTrue(studentServiceImp.findStudentByFaculty("test3").isEmpty());
-//        assertThrows(FacultyNotFoundException.class,() -> studentService.findStudentByFaculty("test3"));
     }
 
     @Test
     @Transactional
-    void test_findStudentByFaculty_whenRecordsExist() {
+    void test_findStudentByFacultyByName_whenRecordsExist() {
 
-        FacultyDto facultyDto = TestData.getMockFacultyDto("test1", "color1");
-        when(facultyServiceImp.getFaculty(anyString())).thenReturn(facultyDto);
-        facultyDto.setId(facultyId);
+        Faculty faculty = TestData.getMockFaculty("test1", "color1");
+        faculty.setId(facultyId);
+        when(facultyServiceImp.getFaculty(anyString())).thenReturn(faculty);
 
         Collection<Student> actual = studentServiceImp.findStudentByFaculty("test1");
         assertEquals(2, actual.size());
         assertEquals("test1", actual.iterator().next().getFaculty().getName());
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByFacultyById_whenRecordsExist() {
+
+        Collection<Student> actual = studentServiceImp.findStudentByFaculty(facultyId);
+        assertEquals(2, actual.size());
+        assertEquals("test1", actual.iterator().next().getFaculty().getName());
+
+    }
+
+    @Test
+    @Transactional
+    void test_findStudentByFacultyById_whenRecordsNotExist() {
+
+        assertTrue(studentServiceImp.findStudentByFaculty(0).isEmpty());
+
     }
 }

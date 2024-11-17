@@ -1,6 +1,7 @@
 package com.github.belousoveu.hogwarts.service;
 
 import com.github.belousoveu.hogwarts.model.dto.FacultyDto;
+import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Faculty;
 import jakarta.transaction.Transactional;
 
@@ -11,9 +12,9 @@ public interface FacultyService {
 
     Collection<Faculty> findFacultiesByColor(String color);
 
-    FacultyDto getFaculty(int id);
+    Faculty getFaculty(int id);
 
-    FacultyDto getFaculty(String name);
+    Faculty getFaculty(String name);
 
     @Transactional
     Faculty updateFaculty(int id, FacultyDto dto);
@@ -24,4 +25,6 @@ public interface FacultyService {
 
     @Transactional
     Faculty addFaculty(FacultyDto dto);
+
+    Collection<StudentDto> getFacultyStudents(int id);
 }
