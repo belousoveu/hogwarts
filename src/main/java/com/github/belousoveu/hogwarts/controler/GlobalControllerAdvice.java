@@ -1,9 +1,6 @@
 package com.github.belousoveu.hogwarts.controler;
 
-import com.github.belousoveu.hogwarts.exception.FacultyNotFoundException;
-import com.github.belousoveu.hogwarts.exception.NotUniqueFacultyNameException;
-import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
-import com.github.belousoveu.hogwarts.exception.ValidationErrorResponse;
+import com.github.belousoveu.hogwarts.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +14,7 @@ import java.util.stream.Collectors;
 public class GlobalControllerAdvice {
 
 
-    @ExceptionHandler({FacultyNotFoundException.class, StudentNotFoundException.class})
+    @ExceptionHandler({FacultyNotFoundException.class, StudentNotFoundException.class, ImageNotFoundException.class})
     public ResponseEntity<String> handleFacultyNotFoundException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
