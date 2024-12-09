@@ -3,6 +3,7 @@ package com.github.belousoveu.hogwarts.controler;
 import com.github.belousoveu.hogwarts.model.entity.Avatar;
 import com.github.belousoveu.hogwarts.service.AvatarService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class AvatarController {
 
     public AvatarController(AvatarService avatarService) {
         this.avatarService = avatarService;
+    }
+
+    @GetMapping("/all")
+    public Page<Avatar> getAllAvatars(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                      @RequestParam(value = "size", required = false, defaultValue = "5") int size) {
+        return avatarService.getAllAvatars(page, size);
+
     }
 
     @GetMapping("/{studentId}/preview")
