@@ -151,7 +151,7 @@ class StudentControllerTest {
     @Test
     void test_addStudent() {
         StudentDto newStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<StudentDto> response = restTemplate.postForEntity(requestUrl+"/add", newStudent, StudentDto.class);
+        ResponseEntity<StudentDto> response = restTemplate.postForEntity(requestUrl + "/add", newStudent, StudentDto.class);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertNotNull(response.getBody());
         assertEquals("newName", response.getBody().getName());
@@ -161,7 +161,7 @@ class StudentControllerTest {
     @Test
     void test_updateStudent_whenCorrectId() {
         StudentDto updatedStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<StudentDto> response = restTemplate.exchange(requestUrl+"/"+studentId,
+        ResponseEntity<StudentDto> response = restTemplate.exchange(requestUrl + "/" + studentId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedStudent),
                 StudentDto.class,
@@ -176,7 +176,7 @@ class StudentControllerTest {
     void test_updateStudent_whenIncorrectId() {
         long incorrectId = 0;
         StudentDto updatedStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<String> response = restTemplate.exchange(requestUrl+"/"+incorrectId,
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl + "/" + incorrectId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedStudent),
                 String.class,
@@ -188,7 +188,7 @@ class StudentControllerTest {
 
     @Test
     void test_deleteStudent() {
-        ResponseEntity<String> response = restTemplate.exchange(requestUrl+"/"+studentId,
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl + "/" + studentId,
                 HttpMethod.DELETE,
                 null,
                 String.class,

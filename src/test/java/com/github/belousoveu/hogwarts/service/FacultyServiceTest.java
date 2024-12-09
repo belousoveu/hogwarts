@@ -52,7 +52,7 @@ class FacultyServiceTest {
         Faculty faculty3 = TestData.getMockFaculty("test3", "red");
         Student student1 = Student.builder().id(1L).name("name1").surname("surname1").faculty(faculty3).build();
         Student student2 = Student.builder().id(2L).name("name2").surname("surname2").faculty(faculty3).build();
-        faculty3.setStudents(List.of(student1,student2));
+        faculty3.setStudents(List.of(student1, student2));
         entityManager.persist(faculty3);
         facultyId3 = faculty3.getId();
 
