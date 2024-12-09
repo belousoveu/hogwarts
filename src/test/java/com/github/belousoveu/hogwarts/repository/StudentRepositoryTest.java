@@ -80,28 +80,28 @@ class StudentRepositoryTest {
     @Test
     @Transactional
     void test_findAllByAgeBetween_whenRecordsExist() {
-        Collection<Student> students = studentRepository.findAllByAgeBetween(11,12);
+        Collection<Student> students = studentRepository.findAllByAgeBetween(11, 12);
         assertEquals(3, students.size());
     }
 
     @Test
     @Transactional
     void test_findAllByAgeBetween_whenRecordsNotExist() {
-        Collection<Student> students = studentRepository.findAllByAgeBetween(15,20);
+        Collection<Student> students = studentRepository.findAllByAgeBetween(15, 20);
         assertTrue(students.isEmpty());
     }
 
     @Test
     @Transactional
     void test_findAllByAgeIn_whenRecordsExist() {
-        Collection<Student> students = studentRepository.findAllByAgeIn(List.of(11,12));
+        Collection<Student> students = studentRepository.findAllByAgeIn(List.of(11, 12));
         assertEquals(3, students.size());
     }
 
     @Test
     @Transactional
     void test_findAllByAgeIn_whenRecordsNotExist() {
-        Collection<Student> students = studentRepository.findAllByAgeIn(List.of(15,20));
+        Collection<Student> students = studentRepository.findAllByAgeIn(List.of(15, 20));
         assertTrue(students.isEmpty());
     }
 }

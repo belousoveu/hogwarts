@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,7 @@ class StudentControllerTest {
 
     String requestUrl;
     int facultyId;
-    long studentId;
+    long studentId, studentId2, studentId3;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -72,6 +73,8 @@ class StudentControllerTest {
         studentRepository.flush();
 
         studentId = student1.getId();
+        studentId2 = student2.getId();
+        studentId3 = student3.getId();
         facultyId = faculty1.getId();
         requestUrl = "http://localhost:" + port + "/student";
 
@@ -148,7 +151,7 @@ class StudentControllerTest {
     @Test
     void test_addStudent() {
         StudentDto newStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<StudentDto> response = restTemplate.postForEntity(requestUrl+"/add", newStudent, StudentDto.class);
+        ResponseEntity<StudentDto> response = restTemplate.postForEntity(requestUrl + "/add", newStudent, StudentDto.class);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertNotNull(response.getBody());
         assertEquals("newName", response.getBody().getName());
@@ -158,7 +161,7 @@ class StudentControllerTest {
     @Test
     void test_updateStudent_whenCorrectId() {
         StudentDto updatedStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<StudentDto> response = restTemplate.exchange(requestUrl+"/"+studentId,
+        ResponseEntity<StudentDto> response = restTemplate.exchange(requestUrl + "/" + studentId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedStudent),
                 StudentDto.class,
@@ -173,7 +176,7 @@ class StudentControllerTest {
     void test_updateStudent_whenIncorrectId() {
         long incorrectId = 0;
         StudentDto updatedStudent = StudentDto.builder().name("newName").surname("newSurname").age(12).facultyId(facultyId).build();
-        ResponseEntity<String> response = restTemplate.exchange(requestUrl+"/"+incorrectId,
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl + "/" + incorrectId,
                 HttpMethod.PUT,
                 new HttpEntity<>(updatedStudent),
                 String.class,
@@ -185,7 +188,7 @@ class StudentControllerTest {
 
     @Test
     void test_deleteStudent() {
-        ResponseEntity<String> response = restTemplate.exchange(requestUrl+"/"+studentId,
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl + "/" + studentId,
                 HttpMethod.DELETE,
                 null,
                 String.class,
@@ -195,4 +198,38 @@ class StudentControllerTest {
         assertNull(response.getBody());
 
     }
+
+    @Test
+    void test_getTotalStudents() {
+        ResponseEntity<Long> response = restTemplate.getForEntity(requestUrl + "/total", Long.class);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertNotNull(response.getBody());
+        assertEquals(3, response.getBody().longValue());
+    }
+
+    @Test
+    void test_getAverageAge() {
+        ResponseEntity<Double> response = restTemplate.getForEntity(requestUrl + "/average", Double.class);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertNotNull(response.getBody());
+        assertEquals(13.0, response.getBody().doubleValue());
+    }
+
+    @Test
+    void test_getLastStudents_withParameter() {
+        ResponseEntity<Collection<StudentDto>> response = restTemplate.exchange(
+                requestUrl + "/last?amount=2",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().size());
+        List<StudentDto> students = response.getBody().stream().toList();
+        assertEquals(studentId2, students.get(0).getId());
+        assertEquals(studentId3, students.get(1).getId());
+    }
+
 }

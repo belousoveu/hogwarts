@@ -9,6 +9,8 @@ import com.github.belousoveu.hogwarts.repository.AvatarRepository;
 import com.github.belousoveu.hogwarts.repository.StudentRepository;
 import com.github.belousoveu.hogwarts.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,5 +76,9 @@ public class AvatarService {
             ext = fileName.substring(fileName.lastIndexOf("."));
         }
         return Path.of(avatarsPath, student.getSurname() + student.getName() + ext);
+    }
+
+    public Page<Avatar> getAllAvatars(int page, int size) {
+        return avatarRepository.findAll(PageRequest.of(page, size));
     }
 }

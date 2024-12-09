@@ -41,7 +41,6 @@ public class StudentController {
         return studentService.findStudentByAge(age).stream().map(studentMapper::toDto).toList();
     }
 
-
     @PostMapping("/add")
     public StudentDto addStudent(@Valid @RequestBody StudentDto dto) {
         return studentMapper.toDto(studentService.addStudent(dto));
@@ -56,6 +55,21 @@ public class StudentController {
     public ResponseEntity<Long> deleteStudent(@PathVariable long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.status(204).body(id);
+    }
+
+    @GetMapping("/total")
+    public Long getTotalStudents() {
+        return studentService.getTotalStudents();
+    }
+
+    @GetMapping("/average")
+    public Double getAverageAge() {
+        return studentService.getAverageAge();
+    }
+
+    @GetMapping("/last")
+    public Collection<StudentDto> getLastStudents(@RequestParam(required = false, defaultValue = "5") long amount) {
+        return studentService.getLastStudents(amount).stream().map(studentMapper::toDto).toList();
     }
 
 }

@@ -13,12 +13,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +66,7 @@ class AvatarServiceTest {
     }
 
     @Test
-    void testUploadAvatar() throws IOException, SQLException {
+    void test_UploadAvatar() throws IOException, SQLException {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
         when(avatarRepository.findByStudentId(1L)).thenReturn(Optional.of(avatar));
 
@@ -80,7 +84,7 @@ class AvatarServiceTest {
     }
 
     @Test
-    void testGetAvatarByStudentId() {
+    void test_GetAvatarByStudentId() {
         when(avatarRepository.findByStudentId(1L)).thenReturn(Optional.of(avatar));
 
         Avatar result = out.getAvatarByStudentId(1L);
@@ -89,9 +93,22 @@ class AvatarServiceTest {
     }
 
     @Test
-    void testGetAvatarByStudentIdNotFound() {
+    void test_GetAvatarByStudentIdNotFound() {
         when(avatarRepository.findByStudentId(1L)).thenReturn(Optional.empty());
 
         assertThrows(ImageNotFoundException.class, () -> out.getAvatarByStudentId(1L));
+    }
+
+    @Test
+    void test_getAllAvatars() {
+        Page<Avatar> expectedPage = new PageImpl<>(Collections.singletonList(new Avatar()));
+
+        when(avatarRepository.findAll(PageRequest.of(0, 10))).thenReturn(expectedPage);
+
+        Page<Avatar> result = out.getAllAvatars(0, 10);
+
+        verify(avatarRepository, times(1)).findAll(PageRequest.of(0, 10));
+        assertEquals(expectedPage, result);
+
     }
 }
