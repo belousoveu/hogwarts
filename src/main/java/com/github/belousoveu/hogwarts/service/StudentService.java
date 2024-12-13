@@ -25,4 +25,10 @@ public interface StudentService {
     Collection<Student> findStudentByFaculty(String faculty);
 
     Collection<Student> findStudentByFaculty(int facultyId);
+
+    Long getTotalStudents();
+
+    Double getAverageAge();
+
+    Collection<Student> getLastStudents(long amount);
 }

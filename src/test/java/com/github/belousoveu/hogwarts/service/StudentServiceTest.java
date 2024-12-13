@@ -229,4 +229,19 @@ class StudentServiceTest {
         assertTrue(studentServiceImp.findStudentByFaculty(0).isEmpty());
 
     }
+
+    @Test
+    void test_getTotalStudents() {
+        assertEquals(4, studentServiceImp.getTotalStudents());
+    }
+
+    @Test
+    void test_getAverageAge() {
+        assertEquals(11.75, studentServiceImp.getAverageAge());
+    }
+
+    @Test
+    void test_getLastStudents() {
+        assertEquals(2, studentServiceImp.getLastStudents(2).size());
+    }
 }

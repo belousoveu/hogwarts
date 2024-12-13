@@ -80,4 +80,19 @@ public class StudentServiceImp implements StudentService {
     public Collection<Student> findStudentByFaculty(int facultyId) {
         return studentRepository.findAllByFacultyId(facultyId);
     }
+
+    @Override
+    public Long getTotalStudents() {
+        return studentRepository.count();
+    }
+
+    @Override
+    public Double getAverageAge() {
+        return studentRepository.averageAge();
+    }
+
+    @Override
+    public Collection<Student> getLastStudents(long amount) {
+        return studentRepository.getLastStudents(amount);
+    }
 }

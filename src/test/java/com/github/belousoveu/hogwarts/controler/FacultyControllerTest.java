@@ -106,7 +106,7 @@ class FacultyControllerTest {
         facultyDto.setName("new faculty");
         facultyDto.setColor(testColor);
 
-        ResponseEntity<FacultyDto> response = restTemplate.postForEntity(requestUrl+"/add", facultyDto, FacultyDto.class);
+        ResponseEntity<FacultyDto> response = restTemplate.postForEntity(requestUrl + "/add", facultyDto, FacultyDto.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("new faculty", response.getBody().getName());
