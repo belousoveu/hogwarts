@@ -8,6 +8,7 @@ import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.AvatarRepository;
 import com.github.belousoveu.hogwarts.repository.StudentRepository;
 import com.github.belousoveu.hogwarts.utils.ImageUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.sql.SQLException;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
+@Slf4j
 public class AvatarService {
 
     private static final int WIDTH_AVATAR = 150;
@@ -61,10 +63,12 @@ public class AvatarService {
         avatar.setMediaType(file.getContentType());
         avatar.setImageData(ImageUtils.getPreviewImage(file, WIDTH_AVATAR, HEIGHT_AVATAR));
         avatarRepository.save(avatar);
+        log.debug("Avatar for student {} has been uploaded", student);
 
     }
 
     public Avatar getAvatarByStudentId(long studentId) {
+        log.debug("Was trying to get avatar for student with id {}", studentId);
         return avatarRepository.findByStudentId(studentId).orElseThrow(() -> new ImageNotFoundException(studentId));
     }
 
@@ -79,6 +83,7 @@ public class AvatarService {
     }
 
     public Page<Avatar> getAllAvatars(int page, int size) {
+        log.debug("Was trying to get all avatars");
         return avatarRepository.findAll(PageRequest.of(page, size));
     }
 }
