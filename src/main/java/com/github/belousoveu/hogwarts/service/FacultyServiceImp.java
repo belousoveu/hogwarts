@@ -61,7 +61,7 @@ public class FacultyServiceImp implements FacultyService {
     public Faculty updateFaculty(int id, FacultyDto dto) {
         if (facultyRepository.findById(id).isPresent()) {
             dto.setId(id);
-            log.debug("Updating faculty with id {}", id);
+            log.info("Updating faculty with id {}", id);
             return save(facultyMapper.toEntity(dto));
         }
         throw new FacultyNotFoundException(id);
@@ -79,13 +79,13 @@ public class FacultyServiceImp implements FacultyService {
     @Override
     public void deleteFaculty(int id) {
         facultyRepository.deleteById(id);
-        log.debug("Deleting faculty with id {}", id);
+        log.info("Deleting faculty with id {}", id);
     }
 
     @Transactional
     @Override
     public Faculty addFaculty(FacultyDto dto) {
-        log.debug("Adding faculty with id {}", dto.getId());
+        log.info("Adding faculty with id {}", dto.getId());
         return save(facultyMapper.toEntity(dto));
     }
 

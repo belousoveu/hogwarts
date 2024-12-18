@@ -30,7 +30,7 @@ public class StudentServiceImp implements StudentService {
     @Transactional
     @Override
     public Student addStudent(StudentDto studentDto) {
-        log.debug("Add student {}", studentDto);
+        log.info("Add student {}", studentDto);
         return studentRepository.save(studentMapper.toEntity(studentDto));
     }
 
@@ -40,7 +40,7 @@ public class StudentServiceImp implements StudentService {
         if (studentRepository.existsById(id)) {
             studentDto.setId(id);
             Student student = studentMapper.toEntity(studentDto);
-            log.debug("Update student {}", student);
+            log.info("Update student {}", student);
             return studentRepository.save(student);
         }
         throw new StudentNotFoundException(id);
@@ -49,7 +49,7 @@ public class StudentServiceImp implements StudentService {
     @Override
     public void deleteStudent(long id) {
         studentRepository.deleteById(id);
-        log.debug("Delete student with id {}", id);
+        log.info("Delete student with id {}", id);
     }
 
     @Override

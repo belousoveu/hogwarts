@@ -63,7 +63,7 @@ public class AvatarService {
         avatar.setMediaType(file.getContentType());
         avatar.setImageData(ImageUtils.getPreviewImage(file, WIDTH_AVATAR, HEIGHT_AVATAR));
         avatarRepository.save(avatar);
-        log.debug("Avatar for student {} has been uploaded", student);
+        log.info("Avatar for student {} has been uploaded", student);
 
     }
 
