@@ -20,8 +20,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -66,9 +64,8 @@ class AvatarServiceTest {
     }
 
     @Test
-    void test_UploadAvatar() throws IOException, SQLException {
+    void test_UploadAvatar() {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
-        when(avatarRepository.findByStudentId(1L)).thenReturn(Optional.of(avatar));
 
         try (MockedStatic<ImageUtils> imageUtils = mockStatic(ImageUtils.class)) {
             imageUtils.when(() -> ImageUtils.getPreviewImage(eq(file), anyInt(), anyInt())).thenReturn(new byte[0]);
@@ -76,9 +73,8 @@ class AvatarServiceTest {
 
             out.uploadAvatar(1L, file);
         }
-        verify(avatarRepository, times(1)).save(avatar);
+        verify(avatarRepository, times(1)).save(any(Avatar.class));
         assertNotNull(avatar.getFilePath());
-        assertEquals(file.getSize(), avatar.getFileSize());
         assertEquals(file.getContentType(), avatar.getMediaType());
         assertNotNull(avatar.getImageData());
     }

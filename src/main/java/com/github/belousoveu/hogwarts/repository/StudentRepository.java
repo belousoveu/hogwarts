@@ -24,4 +24,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query(value = "SELECT * FROM (SELECT * FROM students s ORDER BY s.id DESC LIMIT :amount) AS subquery ORDER BY subquery.id ASC", nativeQuery = true)
     Collection<Student> getLastStudents(@Param("amount") long amount);
+
+    @Query("SELECT UPPER(s.name) FROM students s WHERE s.name LIKE 'A%' ORDER BY s.name")
+    Collection<String> getStartWithAStudents();
+
+
 }

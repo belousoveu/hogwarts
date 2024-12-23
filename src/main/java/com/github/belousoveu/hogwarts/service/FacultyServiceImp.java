@@ -100,6 +100,11 @@ public class FacultyServiceImp implements FacultyService {
         return faculty.getStudents().stream().map(studentMapper::toDto).toList();
     }
 
+    @Override
+    public String getLongestName() {
+        return facultyRepository.findLongestFacultyName();
+    }
+
     private Faculty save(Faculty faculty) {
         try {
             return facultyRepository.saveAndFlush(faculty);

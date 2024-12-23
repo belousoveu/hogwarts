@@ -110,4 +110,11 @@ public class StudentServiceImp implements StudentService {
         log.debug("Getting last {} students", amount);
         return studentRepository.getLastStudents(amount);
     }
+
+    @Override
+    public Collection<String> getStartWithAStudents() {
+
+
+        return studentRepository.getStartWithAStudents();
+    }
 }

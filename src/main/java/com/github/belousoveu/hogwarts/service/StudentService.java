@@ -31,4 +31,6 @@ public interface StudentService {
     Double getAverageAge();
 
     Collection<Student> getLastStudents(long amount);
+
+    Collection<String> getStartWithAStudents();
 }

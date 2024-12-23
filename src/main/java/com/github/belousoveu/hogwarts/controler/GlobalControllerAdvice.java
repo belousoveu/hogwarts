@@ -33,4 +33,9 @@ public class GlobalControllerAdvice {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
+
+    @ExceptionHandler(FileSavingException.class)
+    public ResponseEntity<String> handleFileSavingException(FileSavingException ex) {
+        return ResponseEntity.status(500).body(ex.getMessage());
+    }
 }

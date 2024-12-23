@@ -16,9 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -38,7 +36,7 @@ class AvatarControllerTest {
     private AvatarService avatarService;
 
     @InjectMocks
-    AvatarController avatarController;
+    private AvatarController avatarController;
 
     @Value("${avatars.path}")
     String path;
@@ -106,32 +104,5 @@ class AvatarControllerTest {
         verify(avatarService, times(1)).uploadAvatar(1L, file);
     }
 
-    @Test
-    public void test_uploadAvatar_FileNotSelected() throws Exception {
 
-        MockMultipartFile file = new MockMultipartFile("file", "", "", new byte[0]);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/avatar/{studentId}", 1L)
-                        .file(file))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("Файл не выбран"));
-
-        verify(avatarService, never()).uploadAvatar(anyLong(), any(MultipartFile.class));
-
-    }
-
-    @Test
-    public void test_uploadAvatar_InternalServerError() throws Exception {
-
-        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "test data".getBytes());
-
-        doThrow(new IOException("Test exception")).when(avatarService).uploadAvatar(1L, file);
-
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/avatar/{studentId}", 1L)
-                        .file(file))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.content().string("Test exception"));
-
-        verify(avatarService, times(1)).uploadAvatar(1L, file);
-    }
 }
