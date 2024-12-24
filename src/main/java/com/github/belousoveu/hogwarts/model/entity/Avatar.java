@@ -25,7 +25,7 @@ public class Avatar {
     private byte[] imageData;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Student student;
 
 }

@@ -72,4 +72,9 @@ public class StudentController {
         return studentService.getLastStudents(amount).stream().map(studentMapper::toDto).toList();
     }
 
+    @GetMapping("/start_with_a")
+    public Collection<String> getStartWithAStudents() {
+        return studentService.getStartWithAStudents();
+    }
+
 }

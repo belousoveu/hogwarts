@@ -1,6 +1,7 @@
 package com.github.belousoveu.hogwarts.service;
 
 
+import com.github.belousoveu.hogwarts.exception.FileSavingException;
 import com.github.belousoveu.hogwarts.exception.ImageNotFoundException;
 import com.github.belousoveu.hogwarts.exception.StudentNotFoundException;
 import com.github.belousoveu.hogwarts.model.entity.Avatar;
@@ -8,6 +9,7 @@ import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.AvatarRepository;
 import com.github.belousoveu.hogwarts.repository.StudentRepository;
 import com.github.belousoveu.hogwarts.utils.ImageUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
+@Slf4j
 public class AvatarService {
 
     private static final int WIDTH_AVATAR = 150;
@@ -39,46 +41,46 @@ public class AvatarService {
         this.avatarsPath = avatarsPath;
     }
 
-    public void uploadAvatar(long studentId, MultipartFile file) throws IOException, SQLException {
+    public void uploadAvatar(long studentId, MultipartFile file) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException(studentId));
-        Path filePath = setFullPath(student, file);
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-        try (
-                InputStream is = file.getInputStream();
-                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
-        ) {
-            bis.transferTo(bos);
+        Path filePath = Path.of(avatarsPath, file.getOriginalFilename());
+        try {
+            Files.createDirectories(filePath.getParent());
+            Files.deleteIfExists(filePath);
+            try (
+                    InputStream is = file.getInputStream();
+                    OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+                    BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                    BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
+            ) {
+                bis.transferTo(bos);
+            }
+
+            Avatar avatar = new Avatar();
+
+            avatar.setStudent(student);
+            avatar.setFilePath(filePath.toString());
+            avatar.setFileSize(file.getSize());
+            avatar.setMediaType(file.getContentType());
+            avatar.setImageData(ImageUtils.getPreviewImage(file, WIDTH_AVATAR, HEIGHT_AVATAR));
+            avatarRepository.save(avatar);
+        } catch (IOException e) {
+            throw new FileSavingException(e);
         }
 
-        Avatar avatar = avatarRepository.findByStudentId(studentId).orElse(new Avatar());
-
-        avatar.setStudent(student);
-        avatar.setFilePath(filePath.toString());
-        avatar.setFileSize(file.getSize());
-        avatar.setMediaType(file.getContentType());
-        avatar.setImageData(ImageUtils.getPreviewImage(file, WIDTH_AVATAR, HEIGHT_AVATAR));
-        avatarRepository.save(avatar);
+        log.info("Avatar for student {} has been uploaded", student);
 
     }
 
     public Avatar getAvatarByStudentId(long studentId) {
+        log.debug("Was trying to get avatar for student with id {}", studentId);
         return avatarRepository.findByStudentId(studentId).orElseThrow(() -> new ImageNotFoundException(studentId));
     }
 
 
-    private Path setFullPath(Student student, MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        String ext = "";
-        if (fileName != null && fileName.contains(".")) {
-            ext = fileName.substring(fileName.lastIndexOf("."));
-        }
-        return Path.of(avatarsPath, student.getSurname() + student.getName() + ext);
-    }
 
     public Page<Avatar> getAllAvatars(int page, int size) {
+        log.debug("Was trying to get all avatars");
         return avatarRepository.findAll(PageRequest.of(page, size));
     }
 }

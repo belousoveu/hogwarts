@@ -27,4 +27,6 @@ public interface FacultyService {
     Faculty addFaculty(FacultyDto dto);
 
     Collection<StudentDto> getFacultyStudents(int id);
+
+    String getLongestName();
 }

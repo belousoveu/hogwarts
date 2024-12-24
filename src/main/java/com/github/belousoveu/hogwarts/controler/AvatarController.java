@@ -2,6 +2,9 @@ package com.github.belousoveu.hogwarts.controler;
 
 import com.github.belousoveu.hogwarts.model.entity.Avatar;
 import com.github.belousoveu.hogwarts.service.AvatarService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/avatar")
@@ -59,15 +62,20 @@ public class AvatarController {
     }
 
     @PostMapping(value = "/{studentId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadAvatar(@PathVariable long studentId, @RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Файл не выбран");
-        }
-        try {
-            avatarService.uploadAvatar(studentId, file);
-            return ResponseEntity.ok().build();
-        } catch (SQLException | IOException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
+    public ResponseEntity<String> uploadAvatar(@PathVariable long studentId,
+                                               @Parameter(name = "files", required = true,
+                                                       content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                               schema = @Schema(type = "string", format = "binary")))
+                                               @RequestPart("file") MultipartFile[] files) {
+
+        int count = Arrays.stream(files).parallel()
+                .map(file -> {
+                    avatarService.uploadAvatar(studentId, file);
+                    return 1;
+                })
+                .reduce(0, Integer::sum);
+
+        return ResponseEntity.ok(String.format("Total loading %d files", count));
+
     }
 }

@@ -59,5 +59,10 @@ public class FacultyController {
         return facultyService.findFaculty(name, color).stream().map(facultyMapper::toDto).toList();
     }
 
+    @GetMapping("/longest_name")
+    public String getLongestName() {
+        return facultyService.getLongestName();
+    }
+
 
 }

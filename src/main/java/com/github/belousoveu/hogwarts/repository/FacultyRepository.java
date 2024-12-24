@@ -16,4 +16,7 @@ public interface FacultyRepository extends JpaRepository<Faculty, Integer> {
 
     @Query("SELECT f FROM faculties f WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :name, '%')) OR LOWER(f.color) LIKE LOWER(CONCAT('%', :color, '%'))")
     Collection<Faculty> findAllByNameOrColor(@Param("name") String name, @Param("color") String color);
+
+    @Query("SELECT f.name FROM faculties f ORDER BY LENGTH(f.name) DESC LIMIT 1")
+    String findLongestFacultyName();
 }
