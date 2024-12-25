@@ -33,4 +33,8 @@ public interface StudentService {
     Collection<Student> getLastStudents(long amount);
 
     Collection<String> getStartWithAStudents();
+
+    void printParallel();
+
+    void printSynchronized();
 }

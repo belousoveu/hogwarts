@@ -6,11 +6,13 @@ import com.github.belousoveu.hogwarts.model.dto.StudentDto;
 import com.github.belousoveu.hogwarts.model.entity.Student;
 import com.github.belousoveu.hogwarts.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -113,8 +115,54 @@ public class StudentServiceImp implements StudentService {
 
     @Override
     public Collection<String> getStartWithAStudents() {
-
-
         return studentRepository.getStartWithAStudents();
     }
+
+    @Override
+    public void printParallel() {
+        List<Student> students = studentRepository.findFirst6ByOrderByIdAsc();
+
+        System.out.println(students.get(0));
+        System.out.println(students.get(1));
+
+        CompletableFuture<Void> f1 = CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(2));
+            System.out.println(students.get(3));
+                });
+
+        CompletableFuture<Void> f2 = CompletableFuture.runAsync(() -> {
+            System.out.println(students.get(4));
+            System.out.println(students.get(5));
+        });
+
+        CompletableFuture.allOf(f1, f2).join();
+    }
+
+    @Override
+    public void printSynchronized() {
+        List<Student> students = studentRepository.findFirst6ByOrderByIdAsc();
+
+        printStudent(students.get(0));
+        printStudent(students.get(1));
+
+        CompletableFuture<Void> f1 = CompletableFuture.runAsync(() -> {
+            printStudent(students.get(2));
+            printStudent(students.get(3));
+        });
+
+        CompletableFuture<Void> f2 = CompletableFuture.runAsync(() -> {
+            printStudent(students.get(4));
+            printStudent(students.get(5));
+        });
+
+        CompletableFuture.allOf(f1, f2).join();
+
+    }
+
+    @Synchronized
+    private void printStudent(Student student) {
+        System.out.println(student);
+    }
+
+
 }

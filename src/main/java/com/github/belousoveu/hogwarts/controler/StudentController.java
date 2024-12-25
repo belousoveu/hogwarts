@@ -77,4 +77,15 @@ public class StudentController {
         return studentService.getStartWithAStudents();
     }
 
+    @GetMapping("/print-parallel")
+    public void printParallel() {
+        studentService.printParallel();
+    }
+
+    @GetMapping("/print-sync")
+    public void printSync() {
+        studentService.printSynchronized();
+    }
+
+
 }

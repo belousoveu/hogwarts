@@ -29,4 +29,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Collection<String> getStartWithAStudents();
 
 
+    List<Student> findFirst6ByOrderByIdAsc();
 }
